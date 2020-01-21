@@ -1,0 +1,12 @@
+.removeIcon {
+    position: relative;
+    top: 7px;
+}
+
+.removeIcon:hover {
+    cursor: pointer;
+}
+
+.inputGroup {
+    margin: 0.5rem 0;
+}
