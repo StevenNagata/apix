@@ -4,7 +4,6 @@ import {
   Form,
   Grid,
   Header,
-  Message,
   Segment
 } from "semantic-ui-react";
 
@@ -16,6 +15,10 @@ class Login extends React.Component {
     };
   }
   login = (event) => {
+    if(!event.target.email.value || !event.target.password.value ) {
+      window.alert('Please enter email and password')
+      return null
+    }
     event.preventDefault();
     this.setState({isLoading: true})
     fetch('https://ptg09s1brf.execute-api.us-west-2.amazonaws.com/dev/get-user', {
@@ -24,7 +27,7 @@ class Login extends React.Component {
         'content-type': 'application/json'
       },
       body: JSON.stringify({
-        clientId: 1,
+        clientId: this.props.clientData.CLIENT_ID,
         username: event.target.email.value,
         password: event.target.password.value
       })
@@ -33,18 +36,20 @@ class Login extends React.Component {
     .then(data => {
       if(data.statusCode === 200) {
         const {info, jsonWebTok} = data
+        const isAdmin = info.ROLE.indexOf(9) !== -1 ? true : false
         this.props.updateAuth({
           clientId: info.CLIENT_ID,
           username: info.USERNAME,
-          jsonWebTok: jsonWebTok
+          jsonWebTok: jsonWebTok,
+          isAdmin: isAdmin
         })
+        this.setState({isLoading: false})
         this.props.history.push('/interfaces')
       }
       else {
-        console.log(data)
         window.alert('The username or password was incorrect')
+        this.setState({isLoading: false})
       }
-      this.setState({isLoading: false})
     })
   }
   render() {
@@ -55,13 +60,14 @@ class Login extends React.Component {
         verticalAlign="middle"
       >
         <Grid.Column style={{ maxWidth: 450 }}>
-          <Header as="h2" color="teal" textAlign="center">
-            <span style={{ fontSize: "2rem", margin: "0 1rem" }}>APIX</span>
-            <span>Log-in to your account</span>
+          <Header as="h2" textAlign="center">
+            <span className="primaryColor" style={{ fontSize: "2rem", margin: "0 1rem" }}>APIX</span>
+            <span className="primaryColor" >Log-in to your account</span>
           </Header>
           <Form onSubmit={this.login} size="large">
-            <Segment stacked>
+            <Segment stacked style={{margin: '0 1rem'}}>
               <Form.Input
+              autoComplete="userName"
                 id="email"
                 fluid
                 icon="user"
@@ -69,6 +75,7 @@ class Login extends React.Component {
                 placeholder="E-mail address"
               />
               <Form.Input
+                autoComplete="current-password"
                 id="password"
                 fluid
                 icon="lock"
@@ -77,14 +84,15 @@ class Login extends React.Component {
                 type="password"
               />
 
-              <Button loading={this.state.isLoading} type="submit" color="teal" fluid size="large">
+              <Button style={{backgroundColor: 'rgb(33, 133, 208)', color: 'white' }} 
+              loading={this.state.isLoading} 
+              type="submit"  
+              fluid 
+              size="large">
                 Login
               </Button>
             </Segment>
           </Form>
-          <Message>
-            New to us? Sign Up
-          </Message>
         </Grid.Column>
       </Grid>
     );

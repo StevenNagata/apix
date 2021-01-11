@@ -7,19 +7,21 @@ class CreateInterface extends React.Component {
     this.state = {
       isBatch: false,
       isSubmitting: false,
-      errorMessage: false
+      errorMessage: false,
     };
   }
   submitNewInterface = event => {
     this.setState({ isSubmitting: true });
     const isBatch = this.state.isBatch ? 1 : 0;
     const newInterface = {
-      CLIENT_ID: 1,
+      CLIENT_ID: this.props.clientData.CLIENT_ID,
       NAME: event.target.interfaceName.value,
       DESCRIPTION: event.target.description.value,
       SOURCE_SYSTEM: event.target.sourceSystem.value,
       TARGET_SYSTEM: event.target.targetSystem.value,
-      IS_BATCH: isBatch
+      IS_BATCH: isBatch,
+      URL: '',
+      INTERFACE_KEY: ''
     };
     fetch(
       "https://ptg09s1brf.execute-api.us-west-2.amazonaws.com/dev/add-interface",

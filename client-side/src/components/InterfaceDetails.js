@@ -1,6 +1,5 @@
 import React from "react";
-import { Tab, Container, Form, Checkbox, Button} from "semantic-ui-react";
-import CreateAPI from '../pages/CreateAPI'
+import { Tab, Container, Form, Checkbox, Button, Message} from "semantic-ui-react";
 
 class InterfaceDetails extends React.Component {
   chartRef = React.createRef();
@@ -9,7 +8,8 @@ class InterfaceDetails extends React.Component {
     this.state = {
       avalability: true,
       isBatch: this.props.interfaceDetails.IS_BATCH === 1 ? true : false || false,
-      isSubmitting: false
+      isSubmitting: false,
+      saveMessageOpen: false
     };
   }
   toggleRadio = () => {
@@ -40,7 +40,10 @@ class InterfaceDetails extends React.Component {
     .then(data => {
       if(data.statusCode === 200) {
         this.props.updateInterfaceDetail()
-        this.setState({isSubmitting: false})
+        setTimeout(() => {
+          this.setState({ saveMessageOpen: false });
+        }, 2000);
+        this.setState({isSubmitting: false, saveMessageOpen: true})
       } else {
         window.alert('there was an error updating the interface')
         this.setState({isSubmitting: false})
@@ -52,7 +55,13 @@ class InterfaceDetails extends React.Component {
     const name = interfaceDetails.NAME.toUpperCase()
     return (
       <Tab.Pane style={{ minHeight: "95vh" }}>
-     
+     {this.state.saveMessageOpen && (
+              <Message
+                style={{ position: "fixed", bottom: "10px", right: "10px" }}
+                success
+                header="Your changes have been saved"
+              />
+            )}
 
           <center>
             <h1>{`${name} INTERFACE`}</h1>

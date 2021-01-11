@@ -1,1 +1,20 @@
 
+.primaryColor {
+    color: rgb(33, 133, 208);
+}
+
+.primaryColorBackground {
+    background-color: rgb(33, 133, 208) !important;
+    color: white !important;
+}
+
+.interfaceCard:hover {
+    cursor: pointer;
+}
+
+.clientMenu {
+    border:1px solid rgba(48, 48, 48, 0.1);
+}
+.ui.menu .item:before{
+    width: 0;
+  }

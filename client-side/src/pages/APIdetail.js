@@ -42,8 +42,9 @@ class APIdetail extends React.Component {
       return null
     }
     const panes = [
+      { menuItem: "Usage", render: () => <APIusage interfaceName={this.state.interfaceDetails.NAME} userInfo={this.props.userInfo}/> },
       { menuItem: "Files", render: () => <APIFiles interfaceName={this.state.interfaceDetails.NAME} userInfo={this.props.userInfo}/> },
-      { menuItem: "Usage", render: () => <APIusage interfaceName={this.state.interfaceDetails.NAME}/> },
+     
       {
         menuItem: "Details",
         render: () => {

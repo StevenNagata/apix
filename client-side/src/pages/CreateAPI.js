@@ -172,13 +172,13 @@ class CreateAPI extends React.Component {
                 <div key={index} className="inputGroup">
                   <Form.Group key={index}>
                     <Form.Input
-                      id={"key" + index}
+                      id={"headKey" + index}
                       placeholder="key"
                       value={input.key}
                       onChange={e => this.updateHeaders("key", index, e)}
                     />
                     <Form.Input
-                      id={"value" + index}
+                      id={"headValue" + index}
                       placeholder="value"
                       value={input.value}
                       onChange={e => this.updateHeaders("value", index, e)}
@@ -203,13 +203,13 @@ class CreateAPI extends React.Component {
                 <div key={index} className="inputGroup">
                   <Form.Group>
                     <Form.Input
-                      id={"key" + index}
+                      id={"paramKey" + index}
                       placeholder="key"
                       value={input.key}
                       onChange={e => this.updateParams("key", index, e)}
                     />
                     <Form.Input
-                      id={"value" + index}
+                      id={"paramValue" + index}
                       placeholder="value"
                       value={input.value}
                       onChange={e => this.updateParams("value", index, e)}

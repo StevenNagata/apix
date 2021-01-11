@@ -1,32 +1,25 @@
 import React from "react";
-
+import {
+  Modal,
+  Button,
+  Icon,
+  Header
+} from "semantic-ui-react";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 
 const localizer = momentLocalizer(moment);
 
-
-let myEvents = []
-
-for(var i = 0; i < 10; i++) {
-  let newEvent = {
-    id: i,
-    title: i,
-    start: new Date('Tue Jan 21 2020 09:48:57 GMT-0800 (Pacific Standard Time)'),
-    end: new Date('Tue Jan 21 2020 09:48:57 GMT-0800 (Pacific Standard Time)'),
-    tooltip: 'hello',
-    blahblah: 'blah'
-  }
-  myEvents.push(newEvent)
-}
-
 class MyCalendar extends React.Component {
   chartRef = React.createRef();
   constructor(props) {
     super(props);
     this.state = {
-      events: []
+      events: [],
+      modalOpen: false,
+      file: null,
+      isDownloadingFile: false
     };
   }
   componentDidMount() {
@@ -62,16 +55,73 @@ class MyCalendar extends React.Component {
         }
       })
   }
+  downloadFile = (key) => {
+   this.setState({isDownloadingFile: true})
+    fetch(
+      "https://ptg09s1brf.execute-api.us-west-2.amazonaws.com/dev/get-s3-object",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          key: key
+        })
+      }
+    )
+      .then(resp => resp.json())
+      .then(data => {
+        if (data.statusCode === 200) {
+          var parsed = JSON.parse(data.body);
+          var read = Buffer.from(parsed.Body.data).toString("base64");
+          var a = document.createElement("a");
+          document.body.appendChild(a);
+          a.style = "display: none";
+          var url = `data:application/pdf;base64,${read}`;
+          a.href = url;
+          a.download = key;
+          a.click();
+          this.setState({isDownloadingFile: false, modalOpen: false})
+        } else {
+          alert("There was an error downloading the file");
+          this.setState({isDownloadingFile: false})
+        }
+      });
+  };
   selectEvent = (event) => {
-    console.log(event)
-    this.props.downloadFile(event.fileKey, null)
+    this.setState({modalOpen: true, file: event})
   }
   render() {
+    const {modalOpen, file} = this.state
     return (
       <div>
+        {modalOpen && (
+
+<Modal
+open={this.state.modalOpen}
+onClose={() => this.setState({modalOpen: false, file: null})}
+basic
+size='small'
+>
+<Header content={file.title} />
+<Modal.Content>
+  <p>{`Created on: ${moment(file.start).format('lll')}`}</p>
+</Modal.Content>
+<Modal.Actions>
+<Button color='grey' onClick={() => this.setState({modalOpen: false, file: null})} inverted>
+   Close
+  </Button>
+  <Button loading={this.state.isDownloadingFile} color='blue' onClick={() => this.downloadFile(file.fileKey)} inverted>
+    <Icon name='download' /> Download
+  </Button>
+</Modal.Actions>
+</Modal>
+       
+  )}
         <div style={{ margin: '1rem auto', height: '500pt', maxWidth: '1200px'}}>
           <Calendar
-            popup
+            
+            views={['month','week']}
             events={this.state.events}
             startAccessor="start"
             endAccessor="end"

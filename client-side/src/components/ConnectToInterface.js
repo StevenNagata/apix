@@ -22,11 +22,11 @@ class ConnectToInterface extends React.Component {
           
 
             <CreateAPI 
-            url="https://helloworld.com/" 
+            url={interfaceDetails.URL} 
             method="POST" 
             name={name}
             headers={[{key: 'content-type', value: 'application/json'}]}
-            params={[{key: 'id', value: 1}]}/>
+            params={[{key: 'apix-key', value: interfaceDetails.INTERFACE_KEY}]}/>
        
 
         </div>

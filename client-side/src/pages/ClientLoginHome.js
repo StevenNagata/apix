@@ -4,7 +4,8 @@ import {
   Button,
   Grid,
   Icon,
-  Menu
+  Menu,
+  Segment
 } from "semantic-ui-react";
 import AllInterfaces from '../components/AllInterfaces'
 import Admin from '../components/Admin'
@@ -20,6 +21,7 @@ class ClientLoginHome extends React.Component {
     };
   }
   logout = () => {
+    this.props.logout()
     this.props.history.push("./");
   };
   handleItemClick = (name) => {
@@ -45,18 +47,23 @@ class ClientLoginHome extends React.Component {
     
     if(activeItem === 'Interfaces') {
         currentComponent = <AllInterfaces props={this.props} />
-    } else if(activeItem === 'Reports') {
-        currentComponent = <AllInterfaces props={this.props} />
     } else if( activeItem ==='Admin') {
+      if(this.props.userInfo.isAdmin) {
         currentComponent = <Admin props={this.props} />
+      } else {
+        window.alert('You are not allowed to view this information')
+      }
     }
 
     return (
       <div className="App">
+
         <Grid padded className="tablet computer only">
-          <Menu  inverted fluid fixed="top">
-            <Menu.Item header as="a">
-              APIX
+          <Menu style={{height: '50px'}} inverted fluid fixed="top">
+            <Menu.Item 
+            header
+            style={{border: 'none !important'}}>
+<h2>APIX</h2>
             </Menu.Item>
             <Menu.Menu position="right">
               <Menu.Item onClick={() => this.logout()} as="a">
@@ -65,6 +72,7 @@ class ClientLoginHome extends React.Component {
             </Menu.Menu>
           </Menu>
         </Grid>
+
         <Grid padded className="mobile only">
           <Menu borderless inverted fluid fixed="top">
             <Menu.Item header as="a">
@@ -93,12 +101,12 @@ class ClientLoginHome extends React.Component {
               <Menu.Item as="a"
               active={activeItem === 'Interfaces'}
               onClick={() => this.handleItemClick('Interfaces')}>Interfaces</Menu.Item>
-              <Menu.Item as="a"
-              active={activeItem === 'Reports'}
-              onClick={() =>  this.handleItemClick('Reports')}>Reports</Menu.Item>
-              <Menu.Item as="a"
+              {this.props.userInfo.isAdmin && (
+                <Menu.Item as="a"
               active={activeItem === 'Admin'}
               onClick={() =>  this.handleItemClick('Admin')}>Admin</Menu.Item>
+              )}
+              
               <Menu.Item onClick={() => this.logout()} as="a">
                 Logout
               </Menu.Item>
@@ -107,6 +115,7 @@ class ClientLoginHome extends React.Component {
         </Grid>
         <Grid padded>
           <Grid.Column
+          className="clientMenu"
             tablet={3}
             computer={3}
             only="tablet computer"
@@ -117,21 +126,20 @@ class ClientLoginHome extends React.Component {
               as="a"
               active={activeItem === 'Interfaces'}
               onClick={() => this.handleItemClick('Interfaces')}>
-                Interfaces
+                <Icon name='file alternate outline'/>Interfaces
               </Menu.Item>
-              <Menu.Item 
-              as="a"
-              active={activeItem === 'Reports'}
-              onClick={() => this.handleItemClick('Reports')}>Reports
-              </Menu.Item>
+              {this.props.userInfo.isAdmin && (
               <Menu.Item 
               as="a"
               active={activeItem === 'Admin'}
-              onClick={() => this.handleItemClick('Admin')}>Admin
+              onClick={() => this.handleItemClick('Admin')}>
+                <Icon name='shield'/>Admin
               </Menu.Item>
+              )}
             </Menu>
           </Grid.Column>
           <Grid.Column
+          style={{backgroundColor: 'rgba(248,247,251)', height: '100vh'}}
             mobile={16}
             tablet={13}
             computer={13}
